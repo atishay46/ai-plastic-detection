@@ -1,6 +1,9 @@
 import os
+from dotenv import load_dotenv
 
-ROBOFLOW_API_KEY = "DjUg2URJYeYWIOPaXn29"
-API_URL = "https://serverless.roboflow.com"
-WORKSPACE = "mysto-x"
-WORKFLOW_ID = "general-segmentation-api-2"
+load_dotenv()
+
+ROBOFLOW_API_KEY = os.getenv("ROBOFLOW_API_KEY")
+API_URL = os.getenv("ROBOFLOW_API_URL", "https://serverless.roboflow.com")
+WORKSPACE = os.getenv("WORKSPACE", "mysto-x")
+WORKFLOW_ID = os.getenv("WORKFLOW_ID", "general-segmentation-api-2")

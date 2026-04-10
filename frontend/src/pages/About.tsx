@@ -14,7 +14,7 @@ const About = () => {
       <div className="gradient-hero py-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="font-display text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
-            About EcoDetect
+            About EcoSpectra
           </h1>
           <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto">
             Building a cleaner future through AI-powered pollution detection and citizen engagement.

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CheckCircle, Send } from "lucide-react";
+import { AlertTriangle, CheckCircle, Send, Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,19 +12,51 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { submitReport } from "@/lib/api";
+import type { UserFormData } from "@/components/UserForm";
 
 interface ReportSectionProps {
   hasResult: boolean;
+  formData: UserFormData;
+  ppi: number;
+  severity: string;
+  sharePersonalData: boolean;
 }
 
-const ReportSection = ({ hasResult }: ReportSectionProps) => {
+const ReportSection = ({ hasResult, formData, ppi, severity, sharePersonalData }: ReportSectionProps) => {
   const [reportSent, setReportSent] = useState(false);
   const [reportId, setReportId] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleReport = () => {
-    const id = Math.floor(100000 + Math.random() * 90000000).toString();
-    setReportId(id);
-    setReportSent(true);
+  const handleReport = async () => {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const payload = sharePersonalData
+        ? {
+            name: formData.name,
+            phone: formData.phone,
+            email: formData.email,
+            city: formData.city,
+            ppi,
+            severity,
+          }
+        : {
+            city: formData.city || "Unknown",
+            ppi,
+            severity,
+          };
+
+      const response = await submitReport(payload);
+      setReportId(response.report_id);
+      setReportSent(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to submit report. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (reportSent) {
@@ -40,8 +72,8 @@ const ReportSection = ({ hasResult }: ReportSectionProps) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setReportSent(false)}
-          className="border-border text-card-foreground hover:bg-secondary hover:text-secondary-foreground"
+          onClick={() => { setReportSent(false); setError(null); }}
+          className="border-border text-card-foreground bg-secondary text-secondary-foreground"
         >
           Submit Another
         </Button>
@@ -50,15 +82,30 @@ const ReportSection = ({ hasResult }: ReportSectionProps) => {
   }
 
   return (
-    <div className="card-elevated p-6 text-center">
+    <div className="card-elevated p-6 text-center space-y-3">
+      {error && (
+        <div className="text-sm text-destructive bg-destructive/10 px-4 py-2 rounded-lg mb-2 animate-fade-in">
+          {error}
+        </div>
+      )}
+
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button
-            disabled={!hasResult}
-            className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-8 py-3 text-base"
+            disabled={!hasResult || isSubmitting}
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-8 py-3 text-base transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
           >
-            <Send className="w-4 h-4 mr-2" />
-            Report to Municipal Authority
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4 mr-2" />
+                Report to Municipal Authority
+              </>
+            )}
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
@@ -69,6 +116,15 @@ const ReportSection = ({ hasResult }: ReportSectionProps) => {
             </AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to report this issue to the municipal authority?
+              {sharePersonalData ? (
+                <span className="block mt-2 text-xs text-muted-foreground">
+                  Your personal information will be included in the report.
+                </span>
+              ) : (
+                <span className="block mt-2 text-xs text-muted-foreground">
+                  Only detection data will be sent (no personal information).
+                </span>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -79,6 +135,12 @@ const ReportSection = ({ hasResult }: ReportSectionProps) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {!hasResult && (
+        <p className="text-xs text-muted-foreground mt-2">
+          Upload and analyze an image first to submit a report.
+        </p>
+      )}
     </div>
   );
 };

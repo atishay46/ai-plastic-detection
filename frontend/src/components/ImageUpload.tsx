@@ -129,7 +129,7 @@ const ImageUpload = ({ onImageSelect, preview, onClear }: ImageUploadProps) => {
           variant="outline"
           size="sm"
           onClick={() => fileInputRef.current?.click()}
-          className="flex-1 border-border text-card-foreground hover:bg-secondary hover:text-secondary-foreground"
+          className="flex-1 bg-card-foreground/10 border-border text-card-foreground hover:bg-secondary hover:text-secondary-foreground transition-all duration-300"
         >
           <Upload className="w-4 h-4 mr-2" />
           Upload
@@ -138,7 +138,7 @@ const ImageUpload = ({ onImageSelect, preview, onClear }: ImageUploadProps) => {
           variant="outline"
           size="sm"
           onClick={startCamera}
-          className="flex-1 border-bordertext-card-foreground hover:bg-secondary hover:text-secondary-foreground"
+          className="flex-1 bg-card-foreground/10 border-border text-card-foreground hover:bg-secondary hover:text-secondary-foreground transition-all duration-300"
         >
           <Camera className="w-4 h-4 mr-2" />
           Camera

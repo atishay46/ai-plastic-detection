@@ -12,7 +12,7 @@ const HeroSection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentQuote((prev) => (prev + 1) % quotes.length);
-    }, 4000);
+    }, 6000);
     return () => clearInterval(interval);
   }, []);
 
@@ -32,26 +32,27 @@ const HeroSection = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
         <div className="text-center space-y-6">
           <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight animate-fade-in-up">
-            Turn Waste into Awareness.
-            <br />
-            <span className="text-accent-foreground opacity-90">Detect. Report. Act.</span>
+            EcoSpectra
           </h1>
 
-          <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            AI-powered system to detect plastic pollution and empower citizens to
-            report it instantly.
+          <p className="text-lg md:text-4xl font-semibold text-primary-foreground/90 max-w-3xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
+            AI-Powered Plastic Pollution Detection & Reporting System
           </p>
 
-          {/* Animated quotes */}
-          <div className="h-16 flex items-center justify-center">
+          <p className="text-base md:text-2xl text-primary-foreground/70 max-w-2xl mx-auto animate-fade-in-up italic" style={{ animationDelay: "0.3s" }}>
+            Detect. Analyze. Act for a Cleaner Tomorrow.
+          </p>
+
+          {/* Animated quotes — enlarged, bold, gradient */}
+          <div className="h-20 md:h-16 flex items-center justify-center mt-6">
             {quotes.map((quote, i) => (
               <p
                 key={i}
-                className={`absolute text-sm md:text-base italic text-primary-foreground/70 max-w-xl transition-all duration-700 ${
-                  i === currentQuote
+                className={`absolute text-lg md:text-xl lg:text-2xl font-bold quote-gradient max-w-3xl px-4 transition-all duration-700 ${i === currentQuote
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-4"
-                }`}
+                  }`}
+                style={{ animationDelay: `${i * 0.3}s` }}
               >
                 {quote}
               </p>

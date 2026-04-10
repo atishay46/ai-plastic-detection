@@ -1,7 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { Leaf } from "lucide-react";
+import { Leaf, Sun, Moon } from "lucide-react";
 
-const Navbar = () => {
+interface NavbarProps {
+  darkMode?: boolean;
+  onToggleDarkMode?: (val: boolean) => void;
+}
+
+const Navbar = ({ darkMode = false, onToggleDarkMode }: NavbarProps) => {
   const location = useLocation();
 
   const links = [
@@ -19,7 +24,7 @@ const Navbar = () => {
               <Leaf className="w-5 h-5 text-accent-foreground" />
             </div>
             <span className="font-display text-xl font-bold tracking-tight text-primary-foreground">
-              EcoDetect
+              EcoSpectra
             </span>
           </Link>
 
@@ -37,6 +42,22 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+
+            {/* Dark Mode Button */}
+            {onToggleDarkMode && (
+              <button
+                onClick={() => onToggleDarkMode(!darkMode)}
+                className="dark-mode-btn ml-3"
+                aria-label="Toggle dark mode"
+                id="dark-mode-toggle"
+              >
+                {darkMode ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>
