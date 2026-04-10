@@ -1,4 +1,25 @@
-from inference_sdk import InferenceHTTPClient
+import requests
+import base64
+import os
+
+ROBOFLOW_API_KEY = os.getenv("ROBOFLOW_API_KEY")
+
+def run_inference(image_path):
+    with open(image_path, "rb") as f:
+        image_bytes = f.read()
+
+    img_base64 = base64.b64encode(image_bytes).decode("utf-8")
+
+    url = f"https://serverless.roboflow.com/mysto-x/general-segmentation-api-2?api_key={ROBOFLOW_API_KEY}"
+
+    response = requests.post(
+        url,
+        json={
+            "image": img_base64
+        }
+    )
+
+    return response.json()
 from config import ROBOFLOW_API_KEY, API_URL, WORKSPACE, WORKFLOW_ID
 import tempfile
 
@@ -13,14 +34,6 @@ def detect_objects(image_file):
         temp.write(image_file)
         temp_path = temp.name
 
-    result = client.run_workflow(
-        workspace_name=WORKSPACE,
-        workflow_id=WORKFLOW_ID,
-        images={"image": temp_path},
-        parameters={
-            "classes": "plastic bottle"
-        },
-        use_cache=True
-    )
+    result = run_inference(file_path)
 
-    return result
+    return response.json()
