@@ -64,15 +64,9 @@ with a Plastic Pollution Index (PPI) of {data.get('ppi')}.
 Details of the report are as follows:
 - Report ID: {report_id}
 - Location: {city}
-<<<<<<< HEAD
-- Reported by: {data.get('name')}
-- Contact: {data.get('email')} | {data.get('phone')}
-{location_section}
-=======
 - Reported by: {data.get('name', 'Anonymous')}
 - Contact: {data.get('email', 'N/A')} | {data.get('phone', 'N/A')}
-
->>>>>>> 31b1f639dddd52aaeebe5ad55f3bdaceee1cdab4
+{location_section}
 I request the concerned authority to kindly take necessary action to address this issue at the earliest.
 
 Thank you for your attention.
