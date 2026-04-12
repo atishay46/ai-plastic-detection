@@ -12,7 +12,7 @@ APP_PASSWORD = os.getenv("APP_PASSWORD")
 #  City → Email Mapping
 city_email_map = {
     "Mumbai": "udapureas@rknec.edu",
-    "Pune": "yadavas_1@rknec.edu",
+    "Pune": "yadava_1@rknec.edu",
     "Nagpur": "jainav_1@rknec.edu",
     "Nashik": "raghuseab@rknec.edu",
     "Thane": "jainav_1@rknec.edu",
@@ -23,9 +23,22 @@ def send_report(data):
     report_id = "PP" + str(random.randint(100000, 999999))
 
     city = data.get("city")
+    latitude = data.get("latitude")
+    longitude = data.get("longitude")
 
     #  Dynamic receiver based on city
     receiver_email = city_email_map.get(city, SENDER_EMAIL)
+
+    # Build location section if coordinates are provided
+    location_section = ""
+    if latitude is not None and longitude is not None:
+        maps_link = f"https://www.google.com/maps?q={latitude},{longitude}"
+        location_section = f"""
+Location Details:
+- Latitude: {latitude}
+- Longitude: {longitude}
+- Google Maps Link: {maps_link}
+"""
 
     msg = EmailMessage()
     msg["Subject"] = f"Plastic Pollution Report - {city}"
@@ -47,7 +60,7 @@ Details of the report are as follows:
 - Location: {city}
 - Reported by: {data.get('name')}
 - Contact: {data.get('email')} | {data.get('phone')}
-
+{location_section}
 I request the concerned authority to kindly take necessary action to address this issue at the earliest.
 
 Thank you for your attention.

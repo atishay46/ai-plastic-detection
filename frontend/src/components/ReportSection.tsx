@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CheckCircle, Send, Loader2 } from "lucide-react";
+import { AlertTriangle, CheckCircle, Send, Loader2, MapPin } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,12 +29,53 @@ const ReportSection = ({ hasResult, formData, ppi, severity, sharePersonalData }
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Location state
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setLocationLoading(true);
+    setLocationError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+        setLocationLoading(false);
+      },
+      (err) => {
+        setLocationLoading(false);
+        switch (err.code) {
+          case err.PERMISSION_DENIED:
+            setLocationError("Location access denied. Please enable location or enter manually.");
+            break;
+          case err.POSITION_UNAVAILABLE:
+            setLocationError("Location information is unavailable.");
+            break;
+          case err.TIMEOUT:
+            setLocationError("Location request timed out.");
+            break;
+          default:
+            setLocationError("An unknown error occurred.");
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  };
+
   const handleReport = async () => {
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const payload = sharePersonalData
+      const payload: Record<string, unknown> = sharePersonalData
         ? {
             name: formData.name,
             phone: formData.phone,
@@ -49,7 +90,13 @@ const ReportSection = ({ hasResult, formData, ppi, severity, sharePersonalData }
             severity,
           };
 
-      const response = await submitReport(payload);
+      // Include location if available
+      if (latitude !== null && longitude !== null) {
+        payload.latitude = latitude;
+        payload.longitude = longitude;
+      }
+
+      const response = await submitReport(payload as any);
       setReportId(response.report_id);
       setReportSent(true);
     } catch (err) {
@@ -89,6 +136,40 @@ const ReportSection = ({ hasResult, formData, ppi, severity, sharePersonalData }
         </div>
       )}
 
+      {/* Location Capture */}
+      <div className="space-y-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleGetLocation}
+          disabled={locationLoading}
+          className="w-full bg-card-foreground/5 border-border text-card-foreground hover:bg-secondary hover:text-secondary-foreground transition-all duration-300"
+        >
+          {locationLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Fetching location...
+            </>
+          ) : (
+            <>
+              <MapPin className="w-4 h-4 mr-2" />
+              Use Current Location 📍
+            </>
+          )}
+        </Button>
+
+        {latitude !== null && longitude !== null && (
+          <div className="text-xs text-muted-foreground bg-card-foreground/5 px-3 py-2 rounded-lg space-y-0.5 animate-fade-in">
+            <p>Latitude: <span className="font-mono font-semibold text-card-foreground">{latitude.toFixed(4)}</span></p>
+            <p>Longitude: <span className="font-mono font-semibold text-card-foreground">{longitude.toFixed(4)}</span></p>
+          </div>
+        )}
+
+        {locationError && (
+          <p className="text-xs text-destructive animate-fade-in">{locationError}</p>
+        )}
+      </div>
+
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button
@@ -123,6 +204,11 @@ const ReportSection = ({ hasResult, formData, ppi, severity, sharePersonalData }
               ) : (
                 <span className="block mt-2 text-xs text-muted-foreground">
                   Only detection data will be sent (no personal information).
+                </span>
+              )}
+              {latitude !== null && longitude !== null && (
+                <span className="block mt-1 text-xs text-muted-foreground">
+                  📍 Location: {latitude.toFixed(4)}, {longitude.toFixed(4)}
                 </span>
               )}
             </AlertDialogDescription>

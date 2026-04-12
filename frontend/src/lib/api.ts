@@ -23,6 +23,8 @@ export interface ReportPayload {
   city: string;
   ppi: number;
   severity: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface ReportResponse {
