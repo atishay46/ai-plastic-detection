@@ -77,18 +77,18 @@ const ReportSection = ({ hasResult, formData, ppi, severity, sharePersonalData }
     try {
       const payload: Record<string, unknown> = sharePersonalData
         ? {
-            name: formData.name,
-            phone: formData.phone,
-            email: formData.email,
-            city: formData.city,
-            ppi,
-            severity,
-          }
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          city: formData.city,
+          ppi,
+          severity,
+        }
         : {
-            city: formData.city || "Unknown",
-            ppi,
-            severity,
-          };
+          city: formData.city || "Unknown",
+          ppi,
+          severity,
+        };
 
       // Include location if available
       if (latitude !== null && longitude !== null) {

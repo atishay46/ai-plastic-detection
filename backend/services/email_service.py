@@ -76,7 +76,11 @@ EcoSpectra System
 """)
 
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        # Use port 587 with STARTTLS (more reliable on cloud platforms like Render)
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=15) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.ehlo()
             smtp.login(sender_email, app_password)
             smtp.send_message(msg)
 
@@ -87,8 +91,9 @@ EcoSpectra System
 
     except Exception as e:
         print(f"[ERROR] Email send error: {e}")
+        # Still return the report_id but flag that email failed
         return {
-            "message": "Email failed",
+            "message": f"Report logged for {city} (email delivery failed)",
             "report_id": report_id,
-            "error": str(e)
+            "email_error": str(e)
         }
