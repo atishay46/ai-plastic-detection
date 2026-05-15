@@ -18,13 +18,27 @@ async def analyze_image(file: UploadFile = File(...)):
     except:
         predictions = []
 
-    count = len(predictions)
+    # Extract image dimensions from result for PPI calculation
+    try:
+        pred_block = result[0].get("predictions", {})
+        image_width = pred_block.get("image", {}).get("width", 1)
+        image_height = pred_block.get("image", {}).get("height", 1)
+    except (IndexError, AttributeError):
+        image_width = 1
+        image_height = 1
 
-    ppi, severity = calculate_ppi(count)
+    ppi_result = calculate_ppi(
+        predictions,
+        image_width,
+        image_height
+    )
 
     return {
-        "count": count,
-        "ppi": ppi,
-        "severity": severity,
+        "count": ppi_result["bottle_count"],
+        "ppi": ppi_result["ppi"],
+        "severity": ppi_result["severity"],
+        "coverage_percentage": ppi_result["coverage_percentage"],
+        "density_factor": ppi_result["density_factor"],
+        "average_confidence": ppi_result["average_confidence"],
         "predictions": predictions
     }

@@ -39,6 +39,9 @@ const Index = () => {
         plasticCount: response.count,
         ppiScore: response.ppi,
         severity: response.severity,
+        coveragePercentage: response.coverage_percentage,
+        densityFactor: response.density_factor,
+        averageConfidence: response.average_confidence,
         predictions: response.predictions || [],
       });
     } catch (err) {

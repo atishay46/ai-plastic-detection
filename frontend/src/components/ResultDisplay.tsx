@@ -6,6 +6,9 @@ interface DetectionResult {
   plasticCount: number;
   ppiScore: number;
   severity: "Low" | "Medium" | "High";
+  coveragePercentage: number;
+  densityFactor: number;
+  averageConfidence: number;
   predictions: Prediction[];
 }
 
@@ -102,8 +105,7 @@ const ResultDisplay = ({
       ? "severity-medium"
       : "severity-high";
 
-  const severityPercent =
-    result.severity === "Low" ? 30 : result.severity === "Medium" ? 60 : 90;
+  const severityPercent = Math.min(result.ppiScore, 100);
 
   return (
     <div className="card-elevated p-6 h-full space-y-5 animate-fade-in">
@@ -143,6 +145,22 @@ const ResultDisplay = ({
         <div className="p-3 rounded-xl bg-card-foreground/5 text-center flex flex-col items-center justify-center">
           <AlertTriangle className={`w-5 h-5 mb-1 ${result.severity === "High" ? "text-destructive" : "text-secondary"}`} />
           <p className="text-xs text-muted-foreground">{result.severity}</p>
+        </div>
+      </div>
+
+      {/* Detailed Metrics */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="p-3 rounded-xl bg-card-foreground/5 text-center">
+          <p className="text-lg font-bold text-card-foreground">{result.coveragePercentage}%</p>
+          <p className="text-xs text-muted-foreground">Coverage Area</p>
+        </div>
+        <div className="p-3 rounded-xl bg-card-foreground/5 text-center">
+          <p className="text-lg font-bold text-card-foreground">{result.densityFactor}</p>
+          <p className="text-xs text-muted-foreground">Density Factor</p>
+        </div>
+        <div className="p-3 rounded-xl bg-card-foreground/5 text-center">
+          <p className="text-lg font-bold text-card-foreground">{(result.averageConfidence * 100).toFixed(0)}%</p>
+          <p className="text-xs text-muted-foreground">Avg Confidence</p>
         </div>
       </div>
 

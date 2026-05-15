@@ -13,6 +13,9 @@ export interface AnalyzeResponse {
   count: number;
   ppi: number;
   severity: "Low" | "Medium" | "High";
+  coverage_percentage: number;
+  density_factor: number;
+  average_confidence: number;
   predictions: Prediction[];
 }
 
