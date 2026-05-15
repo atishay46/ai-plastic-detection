@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { FileText, Trash2, Activity, LogOut } from "lucide-react";
+import HotspotMap from "@/components/HotspotMap";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
@@ -198,6 +199,9 @@ const Dashboard = () => {
             </table>
           </div>
         </div>
+
+        {/* Pollution Hotspot Map */}
+        <HotspotMap />
       </main>
     </div>
   );

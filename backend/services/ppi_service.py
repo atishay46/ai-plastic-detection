@@ -37,14 +37,14 @@ def calculate_ppi(predictions, image_width, image_height):
 
         total_confidence += p.get("confidence", 0)
 
-    # -----------------------------
+    
     # 1. Coverage Percentage
-    # -----------------------------
+    
     coverage_percentage = min((total_bottle_area / image_area) * 100, 90)
 
-    # -----------------------------
+    
     # 2. Density Factor
-    # -----------------------------
+        
     # Higher if more waste occupies less area
     density_factor = (
         bottle_count / coverage_percentage
@@ -52,9 +52,9 @@ def calculate_ppi(predictions, image_width, image_height):
         else 0
     )
 
-    # -----------------------------
+    
     # 3. Average Confidence
-    # -----------------------------
+    
     avg_confidence = (
         total_confidence / bottle_count
         if bottle_count > 0
@@ -63,9 +63,8 @@ def calculate_ppi(predictions, image_width, image_height):
 
     confidence_score = avg_confidence * 100
 
-    # -----------------------------
     # 4. Weighted Smart PPI Formula
-    # -----------------------------
+
     ppi = (
         (0.35 * bottle_count) +
         (0.40 * coverage_percentage) +
@@ -76,9 +75,9 @@ def calculate_ppi(predictions, image_width, image_height):
     # Normalize PPI
     ppi = round(min(ppi, 100), 2)
 
-    # -----------------------------
+    
     # Severity Classification
-    # -----------------------------
+    
     if ppi < 30:
         severity = "Low"
     elif ppi < 60:
